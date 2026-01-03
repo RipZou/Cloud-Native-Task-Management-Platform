@@ -2,12 +2,19 @@ require("dotenv").config()
 
 const app = require("./app")
 const connectDB = require("./db/mongoose")
+const { connectKafka } = require('./kafka/client');
+const startTaskWorker = require("./kafka/consumers/taskWorker")
+const startAnalyticsWorker = require("./kafka/consumers/analyticsWorker")
 
 const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
     try{
         await connectDB();
+        await connectKafka();
+
+        startTaskWorker();
+        startAnalyticsWorker();
 
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`)

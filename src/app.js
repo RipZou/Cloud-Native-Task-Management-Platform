@@ -4,6 +4,7 @@ const taskRoutes = require("./routes/task.routes");
 const errorHandler = require("./middlewares/errorhandler");
 const requestId = require("./middlewares/requestId");
 const logger = require("./middlewares/logger");
+const analyticsRoutes = require('./routes/analytics.routes');
 
 // 创建 express 的应用实例，这个实例就是 app
 const app = express();
@@ -16,6 +17,7 @@ app.use(logger);
 
 app.use("/health", healthRoutes)
 app.use("/tasks", taskRoutes)
+app.use('/analytics', analyticsRoutes)
 
 app.use(errorHandler);
 

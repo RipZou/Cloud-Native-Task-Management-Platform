@@ -47,6 +47,27 @@ const publishTaskUpdated = async ({ task, requestId }) => {
 };
 
 /**
+ * Task Completed
+ */
+const publishTaskCompleted = async ({ task, requestId }) => {
+    await producer.send({
+        topic: TOPIC,
+        messages: [
+            {
+                key: task._id.toString(),
+                value: JSON.stringify({
+                    event: 'TASK_COMPLETED',
+                    taskId: task._id.toString(),
+                    requestId,
+                    timestamp: Date.now(),
+                }),
+            },
+        ],
+    });
+};
+
+
+/**
  * Task Deleted
  */
 const publishTaskDeleted = async ({ taskId, requestId }) => {
@@ -70,4 +91,5 @@ module.exports = {
     publishTaskCreated,
     publishTaskUpdated,
     publishTaskDeleted,
+    publishTaskCompleted,
 };

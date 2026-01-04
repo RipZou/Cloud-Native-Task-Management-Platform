@@ -1,6 +1,5 @@
 const { createConsumer } = require("../consumer");
-
-let taskCreatedCount = 0;
+const { applyEvent } = require("../../analytics/taskStats.store");
 
 const startAnalyticsWorker = async () => {
     const consumer = createConsumer('analytics-worker');
@@ -15,10 +14,11 @@ const startAnalyticsWorker = async () => {
         eachMessage: async ({ message }) => {
             const event = JSON.parse(message.value.toString());
 
-            if(event.event === 'TASK_CREATED') {
-                taskCreatedCount += 1;
-                console.log(`[Analytics] totalTasksCreated=${taskCreatedCount}`)
-            }
+            applyEvent(event);
+
+            console.log(
+                `[Analytics] applied ${event.event} taskId=${event.taskId}`
+            );
         }
     })
 }

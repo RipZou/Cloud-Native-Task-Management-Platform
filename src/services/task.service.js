@@ -3,6 +3,7 @@ const {
     publishTaskCreated,
     publishTaskUpdated,
     publishTaskDeleted,
+    publishTaskCompleted,
 } = require('../kafka/taskEvents');
 
 const getAllTasks = async () => {
@@ -25,6 +26,8 @@ const updateTask = async (id, updates, requestId) => {
    const task = await Task.findById(id);
    if (!task) return null;
 
+   const wasCompleted = task.completed;
+
    if (updates.title !== undefined) {
        task.title = updates.title;
    }
@@ -35,10 +38,12 @@ const updateTask = async (id, updates, requestId) => {
 
    await task.save();
 
-   await publishTaskUpdated({
-       task,
-       requestId,
-   })
+   if(!wasCompleted && task.completed === true) {
+       await publishTaskCompleted({ task, requestId });
+   }
+
+   await publishTaskUpdated({ task, requestId });
+
 
     return task;
 }

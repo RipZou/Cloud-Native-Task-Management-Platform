@@ -1,5 +1,5 @@
 const stats = {
-    totalTask: 0,
+    totalTasks: 0,
     completedTasks: 0,
     deletedTasks: 0,
 }
@@ -7,7 +7,7 @@ const stats = {
 const applyEvent = (event) => {
     switch (event.event) {
         case 'TASK_CREATED':
-            stats.totalTask += 1;
+            stats.totalTasks += 1;
             break;
 
         case 'TASK_COMPLETED':

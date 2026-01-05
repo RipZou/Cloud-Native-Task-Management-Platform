@@ -26,4 +26,4 @@ const replayAnalytics = async () => {
 
 }
 
-module.exports = startAnalyticsWorker;
+module.exports = replayAnalytics;

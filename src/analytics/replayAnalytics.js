@@ -5,7 +5,7 @@ const startAnalyticsWorker = require("../kafka/consumers/analyticsWorker");
 const replayAnalytics = async () => {
     console.log('[Replay] Starting analytics replay');
 
-    resetStats();
+    await resetStats();
 
     const consumer = createConsumer('analytics-replay');
 
@@ -19,7 +19,7 @@ const replayAnalytics = async () => {
     await consumer.run({
         eachMessage: async({ message }) => {
             const event = JSON.parse(message.value.toString());
-            applyEvent(event)
+            await applyEvent(event)
         }
     });
 

@@ -14,7 +14,7 @@ const startAnalyticsWorker = async () => {
         eachMessage: async ({ message }) => {
             const event = JSON.parse(message.value.toString());
 
-            applyEvent(event);
+            await applyEvent(event);
 
             console.log(
                 `[Analytics] applied ${event.event} taskId=${event.taskId}`

@@ -1,8 +1,9 @@
-const { getStats } = require('../analytics/taskStats.store');
+const { getStats, resetStats } = require('../analytics/taskStats.store');
 const  replayAnalytics  = require('../analytics/replayAnalytics');
 
-const getTaskStats = (req, res) => {
-    res.json(getStats());
+const getTaskStats = async (req, res) => {
+    const stats = await getStats();
+    res.json(stats);
 }
 
 const replay = (req, res) => {
@@ -10,7 +11,13 @@ const replay = (req, res) => {
     res.json({ status: 'replay started' })
 }
 
+const reset = (req, res) => {
+    resetStats();
+    res.json({ status: 'reset done' })
+}
+
 module.exports = {
     getTaskStats,
-    replay
+    replay,
+    reset,
 }

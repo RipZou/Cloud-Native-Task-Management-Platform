@@ -1,21 +1,29 @@
-const stats = {
-    totalTasks: 0,
-    completedTasks: 0,
-    deletedTasks: 0,
-}
+const AnalyticsStats = require('../models/analyticsStats.model')
 
-const applyEvent = (event) => {
+const applyEvent = async (event) => {
     switch (event.event) {
         case 'TASK_CREATED':
-            stats.totalTasks += 1;
+            await AnalyticsStats.findByIdAndUpdate(
+                'task-analytics',
+                { $inc: { totalTasks: 1 } },
+                { upsert: true }
+            );
             break;
 
         case 'TASK_COMPLETED':
-            stats.completedTasks += 1;
+            await AnalyticsStats.findByIdAndUpdate(
+                'task-analytics',
+                { $inc: { completedTasks: 1 } },
+                { upsert: true }
+            );
             break;
 
         case 'TASK_DELETED':
-            stats.deletedTasks += 1;
+            await AnalyticsStats.findByIdAndUpdate(
+                'task-analytics',
+                { $inc: { deletedTasks: 1 } },
+                { upsert: true }
+            );
             break;
 
         default:
@@ -24,13 +32,21 @@ const applyEvent = (event) => {
 };
 
 const getStats = () => {
-    return {...stats}
+    return AnalyticsStats.findById('task-analytics').lean();
 };
 
-const resetStats = () => {
-    stats.completedTasks = 0;
-    stats.deletedTasks = 0;
-    stats.totalTasks = 0;
+const resetStats = async () => {
+    await AnalyticsStats.findByIdAndUpdate(
+        'task-analytics',
+        {
+            totalTasks: 0,
+            completedTasks: 0,
+            deletedTasks: 0,
+        },
+        {
+            upsert: true,
+        }
+    )
 };
 
 module.exports = {

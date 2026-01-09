@@ -13,6 +13,23 @@ const taskSchema = new mongoose.Schema({
         default: false,
     },
 
+    dueAt: {
+        type: Date,
+        default: null,
+    },
+
+    reminderSent: {
+        type: Boolean,
+        default: false,
+    },
+
+    overdueSent: {
+        type: Boolean,
+        default: false,
+    }
+
+
+
 
 
 }, { timestamps: true, })

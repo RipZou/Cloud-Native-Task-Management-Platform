@@ -9,7 +9,7 @@ const getTasks = async (req, res) => {
 }
 
 const createTask = async (req, res) => {
-    const { title } = req.body
+    const { title, dueAt } = req.body
 
     if(!title) {
         throw new AppError('Title is required', 400);
@@ -17,6 +17,7 @@ const createTask = async (req, res) => {
 
     const task = await taskService.createTask({
         title,
+        dueAt,
         requestId: req.requestId,
     })
 

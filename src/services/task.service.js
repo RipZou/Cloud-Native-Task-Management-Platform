@@ -10,8 +10,8 @@ const getAllTasks = async () => {
     return await Task.find().sort({ createdAt: -1 });
 }
 
-const createTask = async ({ title, requestId }) => {
-    const task = new Task({ title });
+const createTask = async ({ title, dueAt, requestId }) => {
+    const task = new Task({ title, dueAt });
     await task.save();
 
     await publishTaskCreated({

@@ -87,9 +87,56 @@ const publishTaskDeleted = async ({ taskId, requestId }) => {
     });
 };
 
+/**
+ *  Task Reminder
+ */
+
+const publishTaskReminder = async ({ task }) => {
+    await producer.send({
+        topic: TOPIC,
+        messages: [
+            {
+                key: task._id.toString(),
+                value: JSON.stringify({
+                    event: 'TASK_REMINDER',
+                    taskId: task._id.toString(),
+                    title: task.title,
+                    dueAt: task.dueAt,
+                    timestamp: Date.now(),
+                }),
+            },
+        ],
+    })
+}
+
+/**
+ * Task Overdue
+ */
+const publishTaskOverdue = async ({ task }) => {
+    await producer.send({
+        topic: TOPIC,
+        messages: [
+            {
+                key: task._id.toString(),
+                value: JSON.stringify({
+                    event: 'TASK_OVERDUE',
+                    taskId: task._id.toString(),
+                    title: task.title,
+                    dueAt: task.dueAt,
+                    timestamp: Date.now(),
+                }),
+            },
+        ],
+    });
+};
+
+
+
 module.exports = {
     publishTaskCreated,
     publishTaskUpdated,
     publishTaskDeleted,
     publishTaskCompleted,
+    publishTaskReminder,
+    publishTaskOverdue
 };

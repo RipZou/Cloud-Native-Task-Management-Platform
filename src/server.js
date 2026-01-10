@@ -5,6 +5,7 @@ const connectDB = require("./db/mongoose")
 const { connectKafka } = require('./kafka/client');
 const startTaskWorker = require("./kafka/consumers/taskWorker")
 const startAnalyticsWorker = require("./kafka/consumers/analyticsWorker")
+const startNotificationWorker = require("./kafka/consumers/notificationWorker")
 const { runReminderCheck } = require('./kafka/consumers/reminderWorker');
 
 const PORT = process.env.PORT || 3000;
@@ -16,6 +17,7 @@ const startServer = async () => {
 
         startTaskWorker();
         startAnalyticsWorker();
+        startNotificationWorker();
 
         // 3️⃣ 启动 reminder worker（定时任务）
         setInterval(async () => {

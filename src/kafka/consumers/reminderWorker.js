@@ -25,7 +25,7 @@ const runReminderCheck = async () => {
     });
 
     for(const task of overdueTasks) {
-        await publishTaskOverdue({ task} );
+        await publishTaskOverdue({ task } );
 
         task.overdueSent = true;
         await task.save();

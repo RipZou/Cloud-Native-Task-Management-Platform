@@ -6,12 +6,12 @@ const {
     publishTaskCompleted,
 } = require('../kafka/taskEvents');
 
-const getAllTasks = async () => {
-    return await Task.find().sort({ createdAt: -1 });
+const getTasksByUser = async ( userId ) => {
+    return Task.find({ userId }).sort({ createdAt: -1 });
 }
 
-const createTask = async ({ title, dueAt, requestId }) => {
-    const task = new Task({ title, dueAt });
+const createTask = async ({ userId, title, dueAt, requestId }) => {
+    const task = new Task({ userId, title, dueAt });
     await task.save();
 
     await publishTaskCreated({
@@ -22,8 +22,12 @@ const createTask = async ({ title, dueAt, requestId }) => {
     return task;
 }
 
-const updateTask = async (id, updates, requestId) => {
-   const task = await Task.findById(id);
+const updateTask = async (taskId, userId, updates, requestId) => {
+   const task = await Task.findOne({
+       _id: taskId,
+       userId,
+   });
+
    if (!task) return null;
 
    const wasCompleted = task.completed;
@@ -48,12 +52,16 @@ const updateTask = async (id, updates, requestId) => {
     return task;
 }
 
-const deleteTask = async (id, requestId) => {
-   const task = await Task.findByIdAndDelete(id);
+const deleteTask = async (taskId, userId, requestId) => {
+   const task = await Task.findOneAndDelete({
+       _id: taskId,
+       userId,
+   });
+
    if (!task) return false;
 
    await publishTaskDeleted({
-       taskId: id,
+       taskId,
        requestId,
    })
 
@@ -61,7 +69,7 @@ const deleteTask = async (id, requestId) => {
 }
 
 module.exports = {
-    getAllTasks,
+    getTasksByUser,
     createTask,
     updateTask,
     deleteTask,

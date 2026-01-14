@@ -1,6 +1,12 @@
 const mongoose = require('mongoose');
 
 const notificationSchema = new mongoose.Schema({
+
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        index: true, // 👈 很重要，后面查得多
+    },
     type: {
         type: String,
         enum: ['TASK_REMINDER', 'TASK_OVERDUE'],

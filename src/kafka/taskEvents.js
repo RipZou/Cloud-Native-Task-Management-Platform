@@ -14,6 +14,7 @@ const publishTaskCreated = async ({ task, requestId }) => {
                 value: JSON.stringify({
                     event: 'TASK_CREATED',
                     taskId: task._id.toString(),
+                    userId: task.userId.toString(),
                     title: task.title,
                     completed: task.completed,
                     requestId,
@@ -36,6 +37,7 @@ const publishTaskUpdated = async ({ task, requestId }) => {
                 value: JSON.stringify({
                     event: 'TASK_UPDATED',
                     taskId: task._id.toString(),
+                    userId: task.userId.toString(),
                     title: task.title,
                     completed: task.completed,
                     requestId,
@@ -58,6 +60,7 @@ const publishTaskCompleted = async ({ task, requestId }) => {
                 value: JSON.stringify({
                     event: 'TASK_COMPLETED',
                     taskId: task._id.toString(),
+                    userId: task.userId.toString(),
                     requestId,
                     timestamp: Date.now(),
                 }),
@@ -70,15 +73,16 @@ const publishTaskCompleted = async ({ task, requestId }) => {
 /**
  * Task Deleted
  */
-const publishTaskDeleted = async ({ taskId, requestId }) => {
+const publishTaskDeleted = async ({ task, requestId }) => {
     await producer.send({
         topic: TOPIC,
         messages: [
             {
-                key: taskId.toString(),
+                key: task._id.toString(),
                 value: JSON.stringify({
                     event: 'TASK_DELETED',
-                    taskId: taskId.toString(),
+                    taskId: task._id.toString(),
+                    userId: task.userId.toString(),
                     requestId,
                     timestamp: Date.now(),
                 }),
@@ -100,6 +104,7 @@ const publishTaskReminder = async ({ task }) => {
                 value: JSON.stringify({
                     event: 'TASK_REMINDER',
                     taskId: task._id.toString(),
+                    userId: task.userId.toString(),
                     title: task.title,
                     dueAt: task.dueAt,
                     timestamp: Date.now(),
@@ -121,6 +126,7 @@ const publishTaskOverdue = async ({ task }) => {
                 value: JSON.stringify({
                     event: 'TASK_OVERDUE',
                     taskId: task._id.toString(),
+                    userId: task.userId.toString(),
                     title: task.title,
                     dueAt: task.dueAt,
                     timestamp: Date.now(),

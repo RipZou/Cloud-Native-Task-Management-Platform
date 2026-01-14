@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const taskSchema = new mongoose.Schema({
 
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        index: true, // 非常重要，后面你会感谢我
+    },
+
     title: {
         type: String,
         required: true,
@@ -27,8 +33,6 @@ const taskSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     }
-
-
 
 
 

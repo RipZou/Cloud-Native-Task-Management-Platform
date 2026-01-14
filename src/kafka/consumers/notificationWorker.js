@@ -7,7 +7,7 @@ const startNotificationWorker = async () => {
     await consumer.connect();
     await consumer.subscribe({
         topic: 'task-events',
-        fromBeginning: true,
+        fromBeginning: false,
     })
 
     await consumer.run({
@@ -18,6 +18,7 @@ const startNotificationWorker = async () => {
                 case 'TASK_REMINDER':
                     console.log(`[Notify] Reminder: ${event.title}`);
                     await Notification.create({
+                        userId: event.userId,
                         type: 'TASK_REMINDER',
                         taskId: event.taskId,
                         title: event.title,
@@ -28,6 +29,7 @@ const startNotificationWorker = async () => {
                 case 'TASK_OVERDUE':
                     console.log(`[Notify] Overdue: ${event.title}`);
                     await Notification.create({
+                        userId: event.userId,
                         type: 'TASK_OVERDUE',
                         taskId: event.taskId,
                         title: event.title,

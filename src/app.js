@@ -1,6 +1,9 @@
 const express = require("express");
 const healthRoutes = require("./routes/health.routes");
 const taskRoutes = require("./routes/task.routes");
+const notificationRoutes = require('./routes/notification.routes');
+const fakeUser = require('./middlewares/fakeUser');
+
 const errorHandler = require("./middlewares/errorhandler");
 const requestId = require("./middlewares/requestId");
 const logger = require("./middlewares/logger");
@@ -15,9 +18,13 @@ app.use(express.json());
 app.use(requestId);
 app.use(logger);
 
+// temp
+app.use(fakeUser);
+
 app.use("/health", healthRoutes)
 app.use("/tasks", taskRoutes)
-app.use('/analytics', analyticsRoutes)
+app.use("/analytics", analyticsRoutes)
+app.use("/notifications", notificationRoutes)
 
 app.use(errorHandler);
 

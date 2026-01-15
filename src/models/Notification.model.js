@@ -14,7 +14,8 @@ const notificationSchema = new mongoose.Schema({
     },
     taskId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Task'
+        ref: 'Task',
+        required: true,
     },
 
     title: String,
@@ -27,5 +28,10 @@ const notificationSchema = new mongoose.Schema({
     }
 
 }, { timestamps: true })
+
+notificationSchema.index(
+    { userId: 1, taskId: 1, type: 1},
+    { unique: true }
+)
 
 module.exports = mongoose.model('Notification', notificationSchema);

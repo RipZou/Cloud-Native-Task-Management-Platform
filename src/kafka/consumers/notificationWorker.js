@@ -8,40 +8,51 @@ const startNotificationWorker = async () => {
     await consumer.subscribe({
         topic: 'task-events',
         fromBeginning: false,
-    })
+    });
 
     await consumer.run({
-        eachMessage: async ( { message } ) => {
-            const event = JSON.parse(message.value.toString());
+        eachMessage: async ({ message }) => {
+            try {
+                const event = JSON.parse(message.value.toString());
 
-            switch (event.event) {
-                case 'TASK_REMINDER':
-                    console.log(`[Notify] Reminder: ${event.title}`);
-                    await Notification.create({
-                        userId: event.userId,
-                        type: 'TASK_REMINDER',
-                        taskId: event.taskId,
-                        title: event.title,
-                        message: `Task "${event.title}" is due soon`,
-                    });
-                    break;
+                switch (event.event) {
+                    case 'TASK_REMINDER':
+                        console.log(`[Notify] Reminder: ${event.title}`);
+                        await Notification.create({
+                            userId: event.userId,
+                            type: 'TASK_REMINDER',
+                            taskId: event.taskId,
+                            title: event.title,
+                            message: `Task "${event.title}" is due soon`,
+                        });
+                        break;
 
-                case 'TASK_OVERDUE':
-                    console.log(`[Notify] Overdue: ${event.title}`);
-                    await Notification.create({
-                        userId: event.userId,
-                        type: 'TASK_OVERDUE',
-                        taskId: event.taskId,
-                        title: event.title,
-                        message: `Task "${event.title}" is overdue`,
-                    });
-                    break;
+                    case 'TASK_OVERDUE':
+                        console.log(`[Notify] Overdue: ${event.title}`);
+                        await Notification.create({
+                            userId: event.userId,
+                            type: 'TASK_OVERDUE',
+                            taskId: event.taskId,
+                            title: event.title,
+                            message: `Task "${event.title}" is overdue`,
+                        });
+                        break;
 
-                default:
-                    break;
+                    default:
+                        break;
+                }
+            } catch (err) {
+                // ⭐ 幂等冲突：已经处理过了，直接忽略
+                if (err.code === 11000) {
+                    console.log('[NotificationWorker] duplicate ignored');
+                    return;
+                }
+
+                // ⭐ 其他错误：记日志，但不能 throw
+                console.error('[NotificationWorker] error:', err);
             }
         }
-    })
-}
+    });
+};
 
 module.exports = startNotificationWorker;

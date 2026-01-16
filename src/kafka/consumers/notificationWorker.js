@@ -10,6 +10,15 @@ const startNotificationWorker = async () => {
         fromBeginning: false,
     });
 
+    const shutdown = async () => {
+        console.log('[NotificationWorker] shutting down...');
+        await consumer.disconnect();
+        process.exit(0);
+    };
+
+    process.on('SIGINT', shutdown);
+    process.on('SIGTERM', shutdown);
+
     await consumer.run({
         eachMessage: async ({ message }) => {
             try {

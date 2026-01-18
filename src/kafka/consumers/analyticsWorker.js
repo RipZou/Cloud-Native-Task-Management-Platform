@@ -6,7 +6,7 @@ const startAnalyticsWorker = async () => {
 
     await consumer.connect();
     await consumer.subscribe({
-        topic: 'task-events',
+        topic: 'task-events-v2',
         fromBeginning: true,
     });
 

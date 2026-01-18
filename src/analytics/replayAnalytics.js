@@ -7,12 +7,12 @@ const replayAnalytics = async () => {
 
     await resetStats();
 
-    const consumer = createConsumer('analytics-replay');
+    const consumer = createConsumer(`analytics-replay-${Date.now()}`);
 
     await consumer.connect();
 
     await consumer.subscribe({
-        topic: 'task-events',
+        topic: 'task-events-v2',
         fromBeginning: true,
     });
 

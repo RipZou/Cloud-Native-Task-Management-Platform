@@ -1,6 +1,6 @@
 const { producer } = require('./client');
 
-const TOPIC = 'task-events';
+const TOPIC = 'task-events-v2';
 
 /**
  * Task Created

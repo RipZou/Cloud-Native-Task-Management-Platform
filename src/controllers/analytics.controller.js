@@ -1,19 +1,21 @@
-const { getStats, resetStats } = require('../analytics/taskStats.store');
+const { getStatsByUser, resetStatsByUser } = require('../analytics/taskStats.store');
 const  replayAnalytics  = require('../analytics/replayAnalytics');
 
 const getTaskStats = async (req, res) => {
-    const stats = await getStats();
+    const userId = req.user.id;
+    const stats = await getStatsByUser(userId);
     res.json(stats);
 }
 
-const replay = (req, res) => {
-    replayAnalytics();
-    res.json({ status: 'replay started' })
+const reset = async (req, res) => {
+    const userId = req.user.id;
+    await resetStatsByUser(userId);
+    res.json({ status: 'reset done' })
 }
 
-const reset = (req, res) => {
-    resetStats();
-    res.json({ status: 'reset done' })
+const replay = async (req, res) => {
+    replayAnalytics();
+    res.json({ status: 'replay started' })
 }
 
 module.exports = {

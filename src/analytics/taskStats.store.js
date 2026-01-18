@@ -1,56 +1,67 @@
 const AnalyticsStats = require('../models/analyticsStats.model')
 
 const applyEvent = async (event) => {
-    switch (event.event) {
+    const { event: type, userId } = event;
+    if (!userId) return;
+
+    const filter = { userId };
+
+    switch (type) {
         case 'TASK_CREATED':
-            await AnalyticsStats.findByIdAndUpdate(
-                'task-analytics',
+            await AnalyticsStats.findOneAndUpdate(
+                filter,
                 { $inc: { totalTasks: 1 } },
                 { upsert: true }
             );
             break;
 
         case 'TASK_COMPLETED':
-            await AnalyticsStats.findByIdAndUpdate(
-                'task-analytics',
+            await AnalyticsStats.findOneAndUpdate(
+                filter,
                 { $inc: { completedTasks: 1 } },
                 { upsert: true }
             );
             break;
 
         case 'TASK_DELETED':
-            await AnalyticsStats.findByIdAndUpdate(
-                'task-analytics',
+            await AnalyticsStats.findOneAndUpdate(
+                filter,
                 { $inc: { deletedTasks: 1 } },
                 { upsert: true }
             );
             break;
-
-        default:
-            break;
     }
 };
 
-const getStats = () => {
-    return AnalyticsStats.findById('task-analytics').lean();
+const getStatsByUser = async (userId) => {
+    return (
+        (await AnalyticsStats.findOne({ userId }).lean()) ?? {
+            totalTasks: 0,
+            completedTasks: 0,
+            deletedTasks: 0,
+        }
+    );
 };
 
-const resetStats = async () => {
-    await AnalyticsStats.findByIdAndUpdate(
-        'task-analytics',
+const resetStatsByUser = async (userId) => {
+    await AnalyticsStats.findOneAndUpdate(
+        { userId },
         {
             totalTasks: 0,
             completedTasks: 0,
             deletedTasks: 0,
         },
-        {
-            upsert: true,
-        }
-    )
+        { upsert: true }
+    );
+};
+
+const resetAllStats = async () => {
+    await AnalyticsStats.deleteMany({});
 };
 
 module.exports = {
     applyEvent,
-    getStats,
-    resetStats,
+    getStatsByUser,
+    resetStatsByUser,
+    resetAllStats
 }

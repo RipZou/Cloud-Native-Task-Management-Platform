@@ -2,9 +2,11 @@ const mongoose = require('mongoose');
 
 const analyticsStatsSchema = new mongoose.Schema(
     {
-        _id: {
-            type: String,
-            default: 'task-analytics',
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+            unique: true,
+            index: true,
         },
         totalTasks: {
             type: Number,

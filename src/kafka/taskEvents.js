@@ -73,16 +73,24 @@ const publishTaskCompleted = async ({ task, requestId }) => {
 /**
  * Task Deleted
  */
-const publishTaskDeleted = async ({ task, requestId }) => {
+const publishTaskDeleted = async ({ task, taskId, userId, requestId }) => {
+    // Backward compatible: allow passing either a full task doc or explicit ids
+    const resolvedTaskId = task?._id?.toString?.() ?? taskId?.toString?.();
+    const resolvedUserId = task?.userId?.toString?.() ?? userId?.toString?.();
+
+    if (!resolvedTaskId) {
+        throw new Error('[Kafka] publishTaskDeleted requires taskId');
+    }
+
     await producer.send({
         topic: TOPIC,
         messages: [
             {
-                key: task._id.toString(),
+                key: resolvedTaskId,
                 value: JSON.stringify({
                     event: 'TASK_DELETED',
-                    taskId: task._id.toString(),
-                    userId: task.userId.toString(),
+                    taskId: resolvedTaskId,
+                    userId: resolvedUserId,
                     requestId,
                     timestamp: Date.now(),
                 }),

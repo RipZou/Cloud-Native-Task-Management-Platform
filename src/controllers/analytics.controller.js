@@ -1,5 +1,5 @@
 const { getStatsByUser, resetStatsByUser } = require('../analytics/taskStats.store');
-const  replayAnalytics  = require('../analytics/replayAnalytics');
+const { startReplayAnalytics, getReplayStatus } = require('../analytics/replayAnalytics');
 
 const getTaskStats = async (req, res) => {
     const userId = req.user.id;
@@ -14,12 +14,24 @@ const reset = async (req, res) => {
 }
 
 const replay = async (req, res) => {
-    replayAnalytics();
+    const status = getReplayStatus();
+    if (status.running) {
+        return res.status(409).json({ status: 'replay already running' });
+    }
+
+    // System-level operation: rebuild stats for ALL users from Kafka history.
+    // Trigger async and return immediately.
+    startReplayAnalytics().catch(() => {});
     res.json({ status: 'replay started' })
+}
+
+const replayStatus = async (req, res) => {
+    res.json(getReplayStatus());
 }
 
 module.exports = {
     getTaskStats,
     replay,
     reset,
+    replayStatus,
 }

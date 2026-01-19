@@ -61,7 +61,7 @@ const deleteTask = async (taskId, userId, requestId) => {
    if (!task) return false;
 
    await publishTaskDeleted({
-       taskId,
+        task,
        requestId,
    })
 
